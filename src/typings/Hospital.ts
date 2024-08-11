@@ -1,5 +1,5 @@
 export interface Review {
-    userName: string;
+    userName: string;   // userName should be a string
     text: string;
     rating: number | null;
 }
@@ -11,8 +11,6 @@ export interface Hospital {
     location: string;
     shortDesc?: string;
     description?: string;
-    reviews?: {
-      userName: ReactNode; rating: number; text: string 
-}[]; // Example structure
+    reviews?: Review[];  // Use the Review interface for the reviews array
     avgRating?: number;
-  }
+}
