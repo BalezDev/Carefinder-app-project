@@ -1,0 +1,61 @@
+.footer{
+    padding-top: 20px;
+    padding-bottom: 5px;
+    background: var(--primary-color);
+  }
+  
+  .footer__text{ 
+     line-height: 30px;
+     color: #ffffffcf;
+  }
+  
+  .footer_quick-links ul li{
+    background: transparent !important;
+  }
+  
+  .footer_quick-links ul li a{
+    color: #ffffffcf
+  }
+  
+  .quick__links-title{
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 1.1rem;
+  }
+  
+  .footer__contact li span, .footer__contact li p{
+    color: rgba(255, 255, 255, 0.735);
+  }
+  
+  .footer__contact li span{
+    font-size: 1.3rem;
+  }
+  
+  .footer__contact li p{
+    font-size: .9rem;
+  }
+  
+  .footer__copyright{
+    color: rgba(255, 255, 255, 0.735); 
+    font-size: .9rem; 
+    margin-top: 20px; 
+    text-align: center;
+  }
+
+  .careiconmain {
+    margin-right: 7px;
+  }
+
+  .Carehome2 {
+    text-decoration: none;
+    color:#fff;
+  }
+
+  .secondarylinks {
+    text-decoration: none;
+  }
+
+  .secondarylinks:hover {
+    text-decoration:underline;
+    color: #0a1d37;
+  }
