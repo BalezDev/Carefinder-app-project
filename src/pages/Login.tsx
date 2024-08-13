@@ -1,8 +1,7 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from "../firebase.config";
 import { toast } from 'react-toastify';
 import "../styles/login.css";
@@ -52,6 +51,20 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast.error('Please enter your email address first.');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success('Password reset email sent!');
+    } catch (error) {
+      toast.error('Failed to send password reset email.');
+    }
+  };
+
   return (
     <section>
       <Container>
@@ -90,6 +103,15 @@ const Login: React.FC = () => {
                 <Button type='submit' className="auth__btn">
                   Login
                 </Button>
+                <p>
+                  Forgot your password?{' '}
+                  <span
+                    onClick={handleResetPassword}
+                    style={{ color: 'blue', cursor: 'pointer' }}
+                  >
+                    Reset it here.
+                  </span>
+                </p>
                 <p>Don't have an account? <Link to='/signup'>Create one here</Link></p>
               </Form>
             </Col>
