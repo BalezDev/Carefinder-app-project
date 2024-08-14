@@ -15,12 +15,9 @@ const Home: React.FC = () => {
           <Row>
             <Col lg="6" md="6">
               <div className="hero__content">
-                <p className="hero__subtitle">Hospital locations in</p>
-                <h2>Find Hospitals Near You Easily</h2>
+                <h2>Find the Best Hospitals Near You</h2>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad
-                  nihil, esse rerum unde sunt reiciendis dolorum culpa quidem
-                  magni debitis.
+                Search for hospitals in your area and get detailed information about their services, amenities, and more.
                 </p>
                 <motion.button
                   whileTap={{ scale: 1.2 }}
