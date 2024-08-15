@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin SDK
-const serviceAccountPath = path.resolve(__dirname, '../config/serviceAccountKey.json');
+const serviceAccountPath = path.resolve(__dirname, '../../servicekey/config/serviceAccountKey.json');
 const firebaseApp = initializeApp({
   credential: cert(serviceAccountPath),
   databaseURL: `https://${process.env.VITE_PROJECT_ID}.firebaseio.com`,
