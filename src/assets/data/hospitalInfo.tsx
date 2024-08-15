@@ -1,3 +1,7 @@
+import { Hospital } from '../../typings/Hospital'; // Adjust the path as needed
+
+
+
 const hospitalInfo : Hospital[] = [
   {
     id: "01",
