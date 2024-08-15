@@ -25,4 +25,3 @@ dist-ssr
 
 # Ignore the environment file containing API keys
 .env
-serviceAccountKey.json
