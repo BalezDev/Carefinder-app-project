@@ -25,3 +25,4 @@ dist-ssr
 
 # Ignore the environment file containing API keys
 .env
+config
