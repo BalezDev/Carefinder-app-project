@@ -16,12 +16,23 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "types": ["jest", "@testing-library/jest-dom"]
   },
-  "include": ["src", "src/store/store.tsx", "src/typings/excelnode.d.ts", "src/typings/xlsx-populate.d.ts"]
+  "include": [
+    "src",
+    "src/store/store.tsx",
+    "src/setupTests.ts",
+    "src/typings/excelnode.d.ts",
+    "src/typings/xlsx-populate.d.ts",
+    "src/__tests__/HospitalDetails.test.tsx",
+    "src/__tests__/HospitalInfo.test.tsx", // Add this line to include your test files
+  ]
 }
