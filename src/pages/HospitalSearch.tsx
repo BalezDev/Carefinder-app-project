@@ -34,6 +34,9 @@ const HospitalSearch: React.FC = () => {
 
   const maxVisiblePages = 5;
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
@@ -109,6 +112,17 @@ const HospitalSearch: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validate the Markdown input
+    if (!markdown.trim()) {
+      setValidationError("Hospital details cannot be empty.");
+      return;
+    }
+  
+    // Clear previous validation errors
+    setValidationError(null);
+  
+    // Parse Markdown input and add new hospital
     const parsedEntry = parseMarkdownInput(markdown);
     const updatedHospitalData = [...hospitalData, parsedEntry];
     setHospitalData(updatedHospitalData);
@@ -325,28 +339,29 @@ const HospitalSearch: React.FC = () => {
       </section>
 
       <section className="mark-section">
-        <Container>
-          <Row>
-            <Col>
-              <form onSubmit={handleSubmit} className="mark-form">
-                <Editor
-                  style={{ height: "500px" }}
-                  value={markdown}
-                  onChange={handleEditorChange}
-                  renderHTML={(text) => (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {text}
-                    </ReactMarkdown>
-                  )}
-                />
-                <button type="submit" className="mark-button">
-                  Add Hospital
-                </button>
-              </form>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+  <Container>
+    <Row>
+      <Col>
+        <form onSubmit={handleSubmit} className="mark-form">
+          <Editor
+            style={{ height: "500px" }}
+            value={markdown}
+            onChange={handleEditorChange}
+            renderHTML={(text) => (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {text}
+              </ReactMarkdown>
+            )}
+          />
+          {validationError && <p className="error-message">{validationError}</p>}
+          <button type="submit" className="mark-button">
+            Add Hospital
+          </button>
+        </form>
+      </Col>
+    </Row>
+  </Container>
+</section>
     </Helmet>
   );
 };
