@@ -7,8 +7,8 @@ import userIcon from "../../assets/images/user-icon.jpg";
 import useAuth from "../../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase.config";
-import { toast } from 'react-toastify';
-import careicon from "../../assets/images/carefinder 1.jpg"
+import { toast } from "react-toastify";
+import careicon from "../../assets/images/carefinder 1.jpg";
 
 const nav__link = [
   {
@@ -58,10 +58,10 @@ const Header: React.FC = () => {
   const logout = () => {
     signOut(auth)
       .then(() => {
-        toast.success('Signed Out');
-        navigate('/home');
+        toast.success("Signed Out");
+        navigate("/home");
       })
-      .catch(err => {
+      .catch((err) => {
         toast.error(err.message);
       });
   };
@@ -83,16 +83,16 @@ const Header: React.FC = () => {
             <div className="logo">
               <div>
                 <h1>
-                <span>
+                  <span>
                     <img
-                      src= {careicon}
+                      src={careicon}
                       alt="CareFinder Logo"
                       className="careiconmain"
-                      style={{ width: "24px", height: "24px",}}
+                      style={{ width: "24px", height: "24px" }}
                     />
                   </span>
-                  <Link to='/' className="Carehome">
-                  CareFinder
+                  <Link to="/" className="Carehome">
+                    CareFinder
                   </Link>
                 </h1>
               </div>
@@ -132,8 +132,12 @@ const Header: React.FC = () => {
                     <span onClick={logout}>Logout</span>
                   ) : (
                     <div className="d-flex align-items-center justify-content-center flex-column">
-                      <Link to="/signup" className="secondarylinks">Signup</Link>
-                      <Link to="/login" className="secondarylinks">Login</Link>
+                      <Link to="/signup" className="secondarylinks">
+                        Signup
+                      </Link>
+                      <Link to="/login" className="secondarylinks">
+                        Login
+                      </Link>
                     </div>
                   )}
                 </div>

@@ -9,11 +9,11 @@
   color: black;
   font-weight: 600;
   border: 2px solid #0a1d37;
-  width: 100%; /* Full width */
-  padding: 10px; /* Padding inside the button */
-  border-radius: 5px; /* Rounded corners */
-  font-size: 1rem; /* Adjust font size */
-  cursor: pointer; /* Pointer cursor on hover */
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
@@ -38,16 +38,16 @@ p {
 }
 
 p a {
-  color: #f2f8fc; /* Link color */
-  text-decoration: none; /* Remove underline */
+  color: #f2f8fc;
+  text-decoration: none;
 }
 
 p a:hover {
-  text-decoration: underline; /* Underline on hover */
+  text-decoration: underline;
 }
 
-/* Styling for social sign-in buttons */
-.google-btn, .facebook-btn {
+.google-btn,
+.facebook-btn {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
@@ -58,13 +58,12 @@ p a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Space between icon and text */
+  gap: 8px;
   transition: background-color 0.3s ease;
 }
 
-/* Google button specific styling */
 .google-btn {
-  background-color: #4285F4;
+  background-color: #4285f4;
   color: white;
 }
 
@@ -72,7 +71,6 @@ p a:hover {
   background-color: #357ae8;
 }
 
-/* Facebook button specific styling */
 .facebook-btn {
   background-color: #3b5998;
   color: white;
@@ -82,9 +80,8 @@ p a:hover {
   background-color: #2d4373;
 }
 
-/* Reuse auth button styles */
 .auth__btn {
-  background-color: #3498db; /* Override previous styles */
+  background-color: #3498db;
   color: black;
   font-weight: 600;
   border: 2px solid #0a1d37;
@@ -105,7 +102,7 @@ p a:hover {
 }
 
 .icon {
-  font-size: 1.2rem; /* Adjust icon size */
+  font-size: 1.2rem;
 }
 
 .log-text {

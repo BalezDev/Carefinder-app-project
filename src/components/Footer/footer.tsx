@@ -2,7 +2,7 @@ import React from "react";
 import "./footer.css";
 import { Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { Link } from "react-router-dom";
-import careicon from "../../assets/images/carefinder 1.jpg"
+import careicon from "../../assets/images/carefinder 1.jpg";
 
 const Footer: React.FC = () => {
   const year = new Date().getFullYear();
@@ -17,21 +17,22 @@ const Footer: React.FC = () => {
                 <h1 className="text-white">
                   <span>
                     <img
-                      src= {careicon}
+                      src={careicon}
                       alt="CareFinder Logo"
                       className="careiconmain"
-                      style={{ width: "24px", height: "24px",}}
+                      style={{ width: "24px", height: "24px" }}
                     />
                   </span>
-                  <Link to='/' className="Carehome2">
-                  CareFinder
+                  <Link to="/" className="Carehome2">
+                    CareFinder
                   </Link>
                 </h1>
               </div>
             </div>
 
             <p className="footer__text mt-4">
-            Explore top-rated hospitals in your area and get the care you need.
+              Explore top-rated hospitals in your area and get the care you
+              need.
             </p>
           </Col>
 
@@ -40,16 +41,24 @@ const Footer: React.FC = () => {
               <h4 className="quick__links-title">Carefinder Essentials</h4>
               <ListGroup className="mb-3">
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="/hospital" className="secondarylinks">Hospital List</Link>
+                  <Link to="/hospital" className="secondarylinks">
+                    Hospital List
+                  </Link>
                 </ListGroupItem>
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="/signup" className="secondarylinks">Sign Up</Link>
+                  <Link to="/signup" className="secondarylinks">
+                    Sign Up
+                  </Link>
                 </ListGroupItem>
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="/login" className="secondarylinks">Log In</Link>
+                  <Link to="/login" className="secondarylinks">
+                    Log In
+                  </Link>
                 </ListGroupItem>
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="/hospital" className="secondarylinks">Add Hospital</Link>
+                  <Link to="/hospital" className="secondarylinks">
+                    Add Hospital
+                  </Link>
                 </ListGroupItem>
               </ListGroup>
             </div>

@@ -55,21 +55,21 @@ a {
   color: unset;
 }
 
-img{
+img {
   width: 100%;
 }
 
-section{
+section {
   padding: 60px 0px;
 }
 
-.section__title{
+.section__title {
   font-weight: 600;
   color: var(--primary-color);
 }
 
-@media only screen and (max-width:768px){
-  section{
+@media only screen and (max-width: 768px) {
+  section {
     padding: 40px 0px;
   }
-  }
+}

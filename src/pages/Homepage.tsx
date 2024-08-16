@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const Home: React.FC = () => {
-
   return (
     <Helmet title="Home">
       <section className="hero__section">
@@ -17,7 +16,8 @@ const Home: React.FC = () => {
               <div className="hero__content">
                 <h2>Find the Best Hospitals Near You</h2>
                 <p>
-                Search for hospitals in your area and get detailed information about their services, amenities, and more.
+                  Search for hospitals in your area and get detailed information
+                  about their services, amenities, and more.
                 </p>
                 <motion.button
                   whileTap={{ scale: 1.2 }}

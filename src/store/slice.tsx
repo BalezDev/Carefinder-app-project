@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Hospital { // Structure of the hospital
+interface Hospital {
+  // Structure of the hospital
   id: string;
   hospitalName: string;
   address: string;
   location: number;
 }
 
-export interface HospitalsState { // Had to export the state because for some reason it did not show up in the store
+export interface HospitalsState {
+  // Had to export the state because for some reason it did not show up in the store
   hospitals: Hospital[];
 }
 

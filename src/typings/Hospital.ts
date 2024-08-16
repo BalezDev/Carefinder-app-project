@@ -1,7 +1,7 @@
 export interface Review {
-    userName: string;
-    text: string;
-    rating: number | null;
+  userName: string;
+  text: string;
+  rating: number | null;
 }
 
 export interface Hospital {

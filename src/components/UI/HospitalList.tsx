@@ -1,6 +1,6 @@
-import React from 'react';
-import HospitalCard from './HospitalCard';
-import { Hospital } from '../../typings/Hospital'; // Adjust the path as necessary
+import React from "react";
+import HospitalCard from "./HospitalCard";
+import { Hospital } from "../../typings/Hospital";
 
 interface HospitalListProps {
   data: Hospital[];

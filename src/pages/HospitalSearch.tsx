@@ -5,7 +5,14 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import CommonSection from "../components/UI/CommonSection";
 import Helmet from "../components/Helmet/helmet";
-import { Container, Row, Col, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+} from "reactstrap";
 import "../styles/hospitalsearch.css";
 import HospitalList from "../components/UI/HospitalList";
 import { CSVLink } from "react-csv";
@@ -35,8 +42,13 @@ const HospitalSearch: React.FC = () => {
 
         if (Array.isArray(response.data)) {
           hospitalsArray = response.data;
-        } else if (typeof response.data === "object" && response.data !== null) {
-          const possibleArrays = Object.values(response.data).filter(Array.isArray);
+        } else if (
+          typeof response.data === "object" &&
+          response.data !== null
+        ) {
+          const possibleArrays = Object.values(response.data).filter(
+            Array.isArray
+          );
           if (possibleArrays.length > 0) {
             hospitalsArray = possibleArrays[0] as Hospital[];
           }
@@ -132,7 +144,10 @@ const HospitalSearch: React.FC = () => {
 
   const indexOfLastHospital = currentPage * hospitalsPerPage;
   const indexOfFirstHospital = indexOfLastHospital - hospitalsPerPage;
-  const currentHospitals = filteredData.slice(indexOfFirstHospital, indexOfLastHospital);
+  const currentHospitals = filteredData.slice(
+    indexOfFirstHospital,
+    indexOfLastHospital
+  );
 
   const totalPages = Math.ceil(filteredData.length / hospitalsPerPage);
 
@@ -267,7 +282,10 @@ const HospitalSearch: React.FC = () => {
             <Col>
               <Pagination className="pagination">
                 <PaginationItem disabled={currentPage === 1}>
-                  <PaginationLink previous onClick={() => paginate(currentPage - 1)} />
+                  <PaginationLink
+                    previous
+                    onClick={() => paginate(currentPage - 1)}
+                  />
                 </PaginationItem>
 
                 {getPageNumbers().map((page, index) =>
@@ -285,7 +303,10 @@ const HospitalSearch: React.FC = () => {
                 )}
 
                 <PaginationItem disabled={currentPage === totalPages}>
-                  <PaginationLink next onClick={() => paginate(currentPage + 1)} />
+                  <PaginationLink
+                    next
+                    onClick={() => paginate(currentPage + 1)}
+                  />
                 </PaginationItem>
               </Pagination>
             </Col>
@@ -309,10 +330,14 @@ const HospitalSearch: React.FC = () => {
             <Col>
               <form onSubmit={handleSubmit} className="mark-form">
                 <Editor
-                  style={{ height: '500px' }}
+                  style={{ height: "500px" }}
                   value={markdown}
                   onChange={handleEditorChange}
-                  renderHTML={text => <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>}
+                  renderHTML={(text) => (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {text}
+                    </ReactMarkdown>
+                  )}
                 />
                 <button type="submit" className="mark-button">
                   Add Hospital

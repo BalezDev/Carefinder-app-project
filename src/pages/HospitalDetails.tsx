@@ -26,14 +26,11 @@ const HospitalDetails: React.FC = () => {
       try {
         setLoading(true);
         const response = await axios.get<{ data: Hospital[] }>(API_URL);
-        
-        // Log the response to understand its structure
         console.log(response.data);
 
-        // Assuming response.data is an object with a `data` property containing the array
         const hospitals = response.data.data;
         if (Array.isArray(hospitals)) {
-          const hospital = hospitals.find(h => String(h.id) === id);
+          const hospital = hospitals.find((h) => String(h.id) === id);
           if (hospital) {
             setHospital(hospital);
             setError(null);
@@ -88,11 +85,21 @@ const HospitalDetails: React.FC = () => {
     );
   }
 
-  const { name, state, address, phone_number, type, reviews = [], description = "" } = hospital;
+  const {
+    name,
+    state,
+    address,
+    phone_number,
+    type,
+    reviews = [],
+    description = "",
+  } = hospital;
 
-  const avgRating = reviews.length > 0
-    ? reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0) / reviews.length
-    : 0;
+  const avgRating =
+    reviews.length > 0
+      ? reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0) /
+        reviews.length
+      : 0;
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -196,14 +203,20 @@ const HospitalDetails: React.FC = () => {
                       <form onSubmit={submitHandler}>
                         <h4>How would you rate this hospital? </h4>
                         <div className="form__group">
-                          <input type="text" placeholder="Enter Name" ref={reviewUser} />
+                          <input
+                            type="text"
+                            placeholder="Enter Name"
+                            ref={reviewUser}
+                          />
                         </div>
                         <div className="form__group d-flex align-items-center gap-3 rating__group">
                           {Array.from({ length: 5 }, (_, index) => (
                             <motion.span
                               key={index}
                               whileTap={{ scale: 1.2 }}
-                              className={rating === index + 1 ? "selected-rating" : ""}
+                              className={
+                                rating === index + 1 ? "selected-rating" : ""
+                              }
                               onClick={() => setRating(index + 1)}
                             >
                               {index + 1}
@@ -212,9 +225,17 @@ const HospitalDetails: React.FC = () => {
                           ))}
                         </div>
                         <div className="form__group">
-                          <textarea rows={4} placeholder="Review Message..." ref={reviewMsg} />
+                          <textarea
+                            rows={4}
+                            placeholder="Review Message..."
+                            ref={reviewMsg}
+                          />
                         </div>
-                        <motion.button whileTap={{ scale: 1.2 }} type="submit" className="buy__button">
+                        <motion.button
+                          whileTap={{ scale: 1.2 }}
+                          type="submit"
+                          className="buy__button"
+                        >
                           Submit
                         </motion.button>
                       </form>

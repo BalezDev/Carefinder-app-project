@@ -39,15 +39,14 @@ p {
 }
 
 p a {
-  color: #f2f8fc; /* Blue link color */
-  text-decoration: none; /* Remove underline from the link */
+  color: #f2f8fc;
+  text-decoration: none;
 }
 
 p a:hover {
-  text-decoration: underline; /* Underline link on hover */
+  text-decoration: underline;
 }
 
-/* Styling for Google and Facebook buttons */
 .google-btn,
 .facebook-btn {
   width: 100%;
@@ -64,7 +63,7 @@ p a:hover {
 }
 
 .google-btn {
-  background-color: #4285F4;
+  background-color: #4285f4;
   color: white;
 }
 
