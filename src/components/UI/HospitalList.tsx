@@ -7,9 +7,15 @@ interface HospitalListProps {
 }
 
 const HospitalList: React.FC<HospitalListProps> = ({ data }) => {
+  console.log("HospitalList received data:", data.length);
+
+  if (!data || data.length === 0) {
+    return <p>No hospitals to display.</p>;
+  }
+
   return (
     <>
-      {data?.map((item) => (
+      {data.map((item) => (
         <HospitalCard item={item} key={item.id} />
       ))}
     </>

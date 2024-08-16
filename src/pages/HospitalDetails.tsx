@@ -1,42 +1,105 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col } from "reactstrap";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import Helmet from "../components/Helmet/helmet"; // Ensure path is correct
+import Helmet from "../components/Helmet/helmet";
 import CommonSection from "../components/UI/CommonSection";
-import hospitalInfo from "../assets/data/hospitalInfo"; // Ensure this imports correctly
-import { Hospital, Review } from "../typings/Hospital"; // Ensure path is correct
+import { Hospital, Review } from "../typings/Hospital";
 import "../styles/product-details.css";
+import axios from "axios";
+
+const API_URL = "https://api.reliancehmo.com/v3/providers";
 
 const HospitalDetails: React.FC = () => {
+  const [hospital, setHospital] = useState<Hospital | null>(null);
   const [tab, setTab] = useState<string>("desc");
   const [rating, setRating] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const reviewUser = useRef<HTMLInputElement>(null);
   const reviewMsg = useRef<HTMLTextAreaElement>(null);
-
   const { id } = useParams<{ id: string }>();
-  const information = hospitalInfo.find((item) => item.id === id) as Hospital | undefined;
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [information]);
+    const fetchHospital = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<{ data: Hospital[] }>(API_URL);
+        
+        // Log the response to understand its structure
+        console.log(response.data);
 
-  if (!information) {
-    return <p>Hospital not found</p>;
+        // Assuming response.data is an object with a `data` property containing the array
+        const hospitals = response.data.data;
+        if (Array.isArray(hospitals)) {
+          const hospital = hospitals.find(h => String(h.id) === id);
+          if (hospital) {
+            setHospital(hospital);
+            setError(null);
+          } else {
+            setError("Hospital not found");
+            setHospital(null);
+          }
+        } else {
+          throw new Error("Unexpected response format: data is not an array.");
+        }
+      } catch (err) {
+        console.error("Error fetching hospital data:", err);
+        setError("Error fetching hospital data");
+        setHospital(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospital();
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  if (loading) {
+    return <p>Loading hospital details...</p>;
   }
 
-  const {
-    hospitalName,
-    location,
-    avgRating = 0,
-    reviews = [],
-    description,
-    shortDesc,
-  } = information;
+  if (error) {
+    return (
+      <div className="hospital-not-found">
+        <Container>
+          <h2>{error}</h2>
+          <Link to="/hospitals" className="btn btn-primary">
+            Back to Hospital List
+          </Link>
+        </Container>
+      </div>
+    );
+  }
+
+  if (!hospital) {
+    return (
+      <div className="hospital-not-found">
+        <Container>
+          <h2>Hospital Not Found</h2>
+          <p>We couldn't find the hospital you're looking for.</p>
+          <Link to="/hospitals" className="btn btn-primary">
+            Back to Hospital List
+          </Link>
+        </Container>
+      </div>
+    );
+  }
+
+  const { name, state, address, phone_number, type, reviews = [], description = "" } = hospital;
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0) / reviews.length
+    : 0;
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (rating === null) {
+      toast.error("Please select a rating.");
+      return;
+    }
 
     const reviewUserName = reviewUser.current?.value || "Anonymous";
     const reviewUserMsg = reviewMsg.current?.value || "";
@@ -44,28 +107,29 @@ const HospitalDetails: React.FC = () => {
     const reviewObj: Review = {
       userName: reviewUserName,
       text: reviewUserMsg,
-      rating: rating ?? 0, // Default to 0 if rating is null
+      rating,
     };
-    console.log(reviewObj);
-    toast.success("Review sent successfully");
 
-    // Reset form fields after submission
+    console.log(reviewObj);
+    toast.success("Review submitted successfully");
     if (reviewUser.current) reviewUser.current.value = "";
     if (reviewMsg.current) reviewMsg.current.value = "";
-    setRating(null); // Reset rating
+    setRating(null);
   };
 
   return (
-    <Helmet title={hospitalName}>
-      <CommonSection title={hospitalName} />
-
+    <Helmet title={name}>
+      <CommonSection title={name} />
       <section className="pt-0">
         <Container>
           <Row>
             <Col lg="6">
               <div className="product__details">
-                <h2>{hospitalName}</h2>
-                <p>{location}</p>
+                <h2>{name}</h2>
+                <p>{state?.name || "Unknown State"}</p>
+                <p>{address}</p>
+                <p>{phone_number}</p>
+                <p>{type?.name || "Unknown Type"}</p>
                 <div className="product__rating d-flex align-items-center gap-3 mb-3">
                   <div>
                     {Array.from({ length: 5 }, (_, index) => (
@@ -81,16 +145,15 @@ const HospitalDetails: React.FC = () => {
                     ))}
                   </div>
                   <p>
-                    (<span>{avgRating}</span> ratings)
+                    (<span>{avgRating.toFixed(1)}</span> ratings)
                   </p>
                 </div>
-                <p className="mt-3">{shortDesc}</p>
+                <p className="mt-3">{description}</p>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
-
       <section>
         <Container>
           <Row>
@@ -109,7 +172,6 @@ const HospitalDetails: React.FC = () => {
                   Reviews ({reviews.length})
                 </h6>
               </div>
-
               {tab === "desc" ? (
                 <div className="tab__content mt-5">
                   <p>{description}</p>
@@ -118,55 +180,41 @@ const HospitalDetails: React.FC = () => {
                 <div className="product__review mt-5">
                   <div className="review__wrapper">
                     <ul>
-                      {reviews.map((item, index) => (
-                        <li key={index} className="mb-4">
-                          <h6>{item.userName}</h6>
-                          <span>{item.rating} (rating)</span>
-                          <p>{item.text}</p>
-                        </li>
-                      ))}
+                      {reviews.length > 0 ? (
+                        reviews.map((item, index) => (
+                          <li key={index} className="mb-4">
+                            <h6>{item.userName}</h6>
+                            <span>{item.rating} (average rating)</span>
+                            <p>{item.text}</p>
+                          </li>
+                        ))
+                      ) : (
+                        <p>No reviews yet. Be the first to leave a review!</p>
+                      )}
                     </ul>
-
                     <div className="review__form">
                       <form onSubmit={submitHandler}>
                         <h4>How would you rate this hospital? </h4>
                         <div className="form__group">
-                          <input
-                            type="text"
-                            placeholder="Enter Name"
-                            required
-                            ref={reviewUser}
-                          />
+                          <input type="text" placeholder="Enter Name" ref={reviewUser} />
                         </div>
-
                         <div className="form__group d-flex align-items-center gap-3 rating__group">
                           {Array.from({ length: 5 }, (_, index) => (
                             <motion.span
                               key={index}
                               whileTap={{ scale: 1.2 }}
+                              className={rating === index + 1 ? "selected-rating" : ""}
                               onClick={() => setRating(index + 1)}
-                              className={`rating__star ${rating === index + 1 ? "selected" : ""}`}
                             >
                               {index + 1}
                               <i className="ri-star-fill"></i>
                             </motion.span>
                           ))}
                         </div>
-
                         <div className="form__group">
-                          <textarea
-                            rows={4}
-                            placeholder="Review Message..."
-                            required
-                            ref={reviewMsg}
-                          />
+                          <textarea rows={4} placeholder="Review Message..." ref={reviewMsg} />
                         </div>
-
-                        <motion.button
-                          whileTap={{ scale: 1.2 }}
-                          type="submit"
-                          className="buy__button"
-                        >
+                        <motion.button whileTap={{ scale: 1.2 }} type="submit" className="buy__button">
                           Submit
                         </motion.button>
                       </form>

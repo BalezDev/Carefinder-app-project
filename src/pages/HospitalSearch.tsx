@@ -1,60 +1,103 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import CommonSection from "../components/UI/CommonSection";
-import Helmet from "../components/Helmet/helmet";
-import { Container, Row, Col } from "reactstrap";
-import "../styles/hospitalsearch.css";
-import hospitalInfo from "../assets/data/hospitalInfo";
-import HospitalList from "../components/UI/HospitalList";
-import { CSVLink } from "react-csv";
-import { Hospital } from "../typings/Hospital";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Editor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from 'remark-gfm';
+import remarkGfm from "remark-gfm";
+import CommonSection from "../components/UI/CommonSection";
+import Helmet from "../components/Helmet/helmet";
+import { Container, Row, Col, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import "../styles/hospitalsearch.css";
+import HospitalList from "../components/UI/HospitalList";
+import { CSVLink } from "react-csv";
+import { Hospital } from "../typings/Hospital";
+import axios from "axios";
+
+const API_URL = "https://api.reliancehmo.com/v3/providers";
 
 const HospitalSearch: React.FC = () => {
-  const [hospitalData, setHospitalData] = useState<Hospital[]>(hospitalInfo);
-  const [filteredData, setFilteredData] = useState<Hospital[]>(hospitalInfo);
+  const [hospitalData, setHospitalData] = useState<Hospital[]>([]);
+  const [filteredData, setFilteredData] = useState<Hospital[]>([]);
   const [markdown, setMarkdown] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hospitalsPerPage] = useState<number>(30);
+
+  const maxVisiblePages = 5;
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        const response = await axios.get(API_URL);
+        let hospitalsArray: Hospital[] = [];
+
+        if (Array.isArray(response.data)) {
+          hospitalsArray = response.data;
+        } else if (typeof response.data === "object" && response.data !== null) {
+          const possibleArrays = Object.values(response.data).filter(Array.isArray);
+          if (possibleArrays.length > 0) {
+            hospitalsArray = possibleArrays[0] as Hospital[];
+          }
+        }
+
+        if (hospitalsArray.length > 0) {
+          setHospitalData(hospitalsArray);
+          setFilteredData(hospitalsArray);
+        } else {
+          setError("No hospitals found in the data");
+        }
+      } catch (error) {
+        setError("Failed to fetch hospital data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHospitals();
+  }, []);
 
   const handleFilter = (e: ChangeEvent<HTMLSelectElement>) => {
     const filterValue = e.target.value;
-
     if (filterValue === "all") {
       setFilteredData(hospitalData);
     } else {
       const filteredLists = hospitalData.filter(
-        (item) => item.location === filterValue
+        (item) => item.location?.toLowerCase() === filterValue.toLowerCase()
       );
       setFilteredData(filteredLists);
     }
+    setCurrentPage(1); // Reset to first page after filtering
   };
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value.toLowerCase();
     const searchedHospitals = hospitalData.filter((item) =>
-      item.hospitalName.toLowerCase().includes(searchTerm)
+      item.name.toLowerCase().includes(searchTerm)
     );
     setFilteredData(searchedHospitals);
+    setCurrentPage(1);
   };
 
   const exportHospitals = () => {
-    return filteredData.map((item) => ({
-      ID: item.id,
-      HospitalName: item.hospitalName,
-      Address: item.address,
-      Location: item.location,
-    }));
+    return Array.isArray(filteredData)
+      ? filteredData.map((item) => ({
+          ID: item.id,
+          HospitalName: item.name,
+          Address: item.address,
+          Location: item.location,
+        }))
+      : [];
   };
 
-  const handleEditorChange = ({ text }: { text: string }) => {
+  const handleEditorChange = ({ text }: { html: string; text: string }) => {
     setMarkdown(text);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsedEntry = parseMarkdownInput(markdown);
-
     const updatedHospitalData = [...hospitalData, parsedEntry];
     setHospitalData(updatedHospitalData);
     setFilteredData(updatedHospitalData);
@@ -63,16 +106,21 @@ const HospitalSearch: React.FC = () => {
 
   const parseMarkdownInput = (input: string): Hospital => {
     const [hospitalName, address, location] = input.split("\n");
-
     return {
       id: generateUniqueId(),
-      hospitalName: hospitalName.trim(),
+      name: hospitalName.trim(),
       address: address.trim(),
-      location: location.trim(),
+      location: location.trim() || "",
       shortDesc: "",
       description: "",
       reviews: [],
       avgRating: 0,
+      tier_id: 0,
+      type_id: 0,
+      phone_number: "",
+      state: { id: 0, name: "" },
+      type: { id: 0, name: "" },
+      products: [],
     };
   };
 
@@ -82,9 +130,45 @@ const HospitalSearch: React.FC = () => {
     return `entry-${timestamp}-${randomSuffix}`;
   };
 
+  const indexOfLastHospital = currentPage * hospitalsPerPage;
+  const indexOfFirstHospital = indexOfLastHospital - hospitalsPerPage;
+  const currentHospitals = filteredData.slice(indexOfFirstHospital, indexOfLastHospital);
+
+  const totalPages = Math.ceil(filteredData.length / hospitalsPerPage);
+
+  const getPageNumbers = () => {
+    let startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
+    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+    if (endPage - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    }
+
+    const pages = [];
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) pages.push("...");
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) pages.push("...");
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <Helmet title="Hospital">
       <CommonSection title="Hospital Search" />
+
       <section>
         <Container>
           <Row>
@@ -92,33 +176,9 @@ const HospitalSearch: React.FC = () => {
               <div className="filter__widget">
                 <label htmlFor="filter">Filter By States</label>
                 <select id="filter" onChange={handleFilter}>
-                  <option value="all">Filter By States</option>
+                  <option value="all">All Locations</option>
                   <option value="lagos">Lagos</option>
                   <option value="abuja">Abuja</option>
-                  <option value="ogun">Ogun</option>
-                  <option value="osun">Osun</option>
-                  <option value="oyo">Oyo</option>
-                  <option value="ondo">Ondo</option>
-                  <option value="ekiti">Ekiti</option>
-                  <option value="anambra">Anambra</option>
-                  <option value="bauchi">Bauchi</option>
-                  <option value="jos">Jos</option>
-                  <option value="rivers">Rivers</option>
-                  <option value="taraba">Taraba</option>
-                  <option value="sokoto">Sokoto</option>
-                  <option value="adamawa">Adamawa</option>
-                  <option value="abia">Abia</option>
-                  <option value="enugu">Enugu</option>
-                  <option value="uyo">Uyo</option>
-                  <option value="benue">Benue</option>
-                  <option value="delta">Delta</option>
-                  <option value="imo">Imo</option>
-                  <option value="kwara">Kwara</option>
-                  <option value="niger">Niger</option>
-                  <option value="kano">Kano</option>
-                  <option value="kaduna">Kaduna</option>
-                  <option value="calabar">Calabar</option>
-                  <option value="ebonyi">Ebonyi</option>
                 </select>
               </div>
             </Col>
@@ -127,7 +187,7 @@ const HospitalSearch: React.FC = () => {
               <div className="filter__widget">
                 <label htmlFor="sort">Sort By</label>
                 <select id="sort">
-                  <option>Sort By</option>
+                  <option value="default">Sort By</option>
                   <option value="ascending">Ascending</option>
                   <option value="descending">Descending</option>
                 </select>
@@ -153,17 +213,57 @@ const HospitalSearch: React.FC = () => {
       <section className="pt-0">
         <Container>
           <Row>
-            {filteredData.length === 0 ? (
-              <h1 className="text-center fs-4">No Hospitals Found</h1>
+            {isLoading ? (
+              <h2>Loading...</h2>
+            ) : error ? (
+              <h2>{error}</h2>
+            ) : currentHospitals.length > 0 ? (
+              <HospitalList data={currentHospitals} />
             ) : (
-              <HospitalList data={filteredData} />
+              <h1 className="text-center fs-4">No Hospitals Found</h1>
             )}
           </Row>
         </Container>
       </section>
 
+      <section className="pagination-section">
+        <Container>
+          <Row>
+            <Col>
+              <Pagination className="pagination">
+                <PaginationItem disabled={currentPage === 1}>
+                  <PaginationLink previous onClick={() => paginate(currentPage - 1)} />
+                </PaginationItem>
+
+                {getPageNumbers().map((page, index) =>
+                  page === "..." ? (
+                    <PaginationItem key={index} disabled>
+                      <PaginationLink>...</PaginationLink>
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={index} active={currentPage === page}>
+                      <PaginationLink onClick={() => paginate(Number(page))}>
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+
+                <PaginationItem disabled={currentPage === totalPages}>
+                  <PaginationLink next onClick={() => paginate(currentPage + 1)} />
+                </PaginationItem>
+              </Pagination>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
       <section>
-        <CSVLink data={exportHospitals()} filename={"hospitals.csv"} className="export-link">
+        <CSVLink
+          data={exportHospitals()}
+          filename={"hospitals.csv"}
+          className="export-link"
+        >
           Export Hospital List
         </CSVLink>
       </section>
@@ -174,13 +274,14 @@ const HospitalSearch: React.FC = () => {
             <Col>
               <form onSubmit={handleSubmit} className="mark-form">
                 <Editor
+                  style={{ height: '500px' }}
                   value={markdown}
                   onChange={handleEditorChange}
-                  renderHTML={(text) => <ReactMarkdown remarkPlugins={[remarkGfm]} children={text} />}
-                  placeholder="Enter hospital details in Markdown format"
-                  className="mark-area"
+                  renderHTML={text => <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>}
                 />
-                <button type="submit" className="mark-button">Add Hospital</button>
+                <button type="submit" className="mark-button">
+                  Add Hospital
+                </button>
               </form>
             </Col>
           </Row>
