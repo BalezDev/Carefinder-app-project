@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import axios from 'axios';
 import { BrowserRouter as Router } from 'react-router-dom';
 import HospitalDetails from '../HospitalDetails';
+import React from 'react';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
