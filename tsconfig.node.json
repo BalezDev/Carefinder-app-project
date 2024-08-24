@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
-    "jsx": "react",
+    "target": "ES2020",
+    "module": "ESNext",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noEmit": true,
@@ -19,6 +19,5 @@
     "src/typings/xlsx-populate.d.ts",
     "src/__tests__/HospitalDetails.test.tsx",
     "src/__tests__/HospitalInfo.test.tsx"
-  ],
-  "exclude": ["node_modules"]
+  ]
 }
