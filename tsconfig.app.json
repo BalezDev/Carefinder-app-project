@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     
 
     /* Linting */
@@ -24,6 +24,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": [
@@ -33,6 +34,7 @@
     "src/typings/excelnode.d.ts",
     "src/typings/xlsx-populate.d.ts",
     "src/__tests__/HospitalDetails.test.tsx",
-    "src/__tests__/HospitalInfo.test.tsx", // Add this line to include your test files
-  ]
+    "src/__tests__/HospitalInfo.test.tsx",
+  ],
+  "exclude": ["node_modules"]
 }
