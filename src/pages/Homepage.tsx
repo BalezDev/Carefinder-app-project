@@ -14,7 +14,7 @@ const Home: React.FC = () => {
           <Row>
             <Col lg="6" md="6">
               <div className="hero__content">
-                <h2>Find the Best Hospitals Near You</h2>
+                <h2>Find the Best Hospitals Near You.</h2>
                 <p>
                   Search for hospitals in your area and get detailed information
                   about their services, amenities, and more.
